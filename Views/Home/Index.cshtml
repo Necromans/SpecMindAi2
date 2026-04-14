@@ -1,0 +1,613 @@
+﻿@model SpecMind.Models.HomeIndexViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var vm = Model ?? new SpecMind.Models.HomeIndexViewModel();
+    var uploadCollapsedClass = vm.IsUploadPanelCollapsed ? "collapsed" : "";
+}
+
+<section class="dashboard-shell">
+    <div class="container-fluid">
+        <div class="row g-4 dashboard-grid align-items-start">
+
+            <div class="col-12 col-xl-3">
+                <aside class="dashboard-sidebar dashboard-sidebar-materials">
+                    <div class="sidebar-brand">SpecMind</div>
+
+                    <a class="sidebar-action active" href="/Home/Index">Новый анализ</a>
+                    <a class="sidebar-action" href="#history-block">История документов</a>
+                    <a class="sidebar-action" href="@(vm.CurrentHistoryId.HasValue ? $"/Chat/Index?historyId={vm.CurrentHistoryId}" : "/Chat/Index")">Чат-ассистент</a>
+
+                    <div class="sidebar-section-title mt-4">Полезные материалы</div>
+
+                    @foreach (var material in vm.ReferenceMaterials)
+                    {
+                        <div class="material-card mb-3">
+                            <div class="material-card-head">
+                                <div class="material-title">@material.Title (@material.StatusText)</div>
+
+                                <button type="button"
+                                        class="material-collapse-btn"
+                                        onclick="toggleMaterialCard(this)">
+                                    Свернуть
+                                </button>
+                            </div>
+
+                            <div class="material-body">
+                                <div class="material-actions mt-3">
+                                    <button type="button"
+                                            class="material-btn material-open"
+                                            onclick="openMaterialModal('@material.MaterialType')">
+                                        Открыть
+                                    </button>
+
+                                    <a class="material-btn material-download" href="@material.DownloadUrl" download>
+                                        Скачать
+                                    </a>
+                                </div>
+
+                                <form asp-action="@material.UploadAction"
+                                      asp-controller="Home"
+                                      method="post"
+                                      enctype="multipart/form-data"
+                                      class="mt-3">
+                                    @Html.AntiForgeryToken()
+
+                                    <label class="custom-file-trigger w-100 mb-2">
+                                        <span>Выбрать файл</span>
+                                        <input type="file" name="file" class="custom-hidden-file" />
+                                    </label>
+
+                                    <button type="submit" class="material-btn material-upload w-100">
+                                        Загрузить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </aside>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <div class="dashboard-main">
+
+                    <div class="dashboard-topbar">
+                        <div>
+                            <h1 class="dashboard-title">Рабочая панель НТЗ</h1>
+                            <p class="dashboard-subtitle">
+                                Загрузите файл, получите анализ, откройте историю и продолжите доработку в AI-чате.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card mb-4 upload-panel @uploadCollapsedClass" id="uploadPanelCard">
+                        <div class="d-flex justify-content-between align-items-center mb-3 upload-panel-header">
+                            <h5 class="mb-0">Загрузка документа</h5>
+
+                            <button type="button" class="upload-collapse-btn" id="toggleUploadPanelBtn">
+                                @(vm.IsUploadPanelCollapsed ? "Развернуть" : "Свернуть")
+                            </button>
+                        </div>
+
+                        <div class="upload-panel-body" id="uploadPanelBody">
+                            <form asp-action="Index" asp-controller="Home" method="post" enctype="multipart/form-data" id="analysisForm">
+                                @Html.AntiForgeryToken()
+
+                                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-light">Файл</label>
+
+                                    <label class="custom-file-trigger">
+                                        <span id="mainFileButtonText">Выбрать файл</span>
+                                        <input asp-for="UploadedFile" type="file" class="custom-hidden-file" id="mainUploadedFileInput" />
+                                    </label>
+
+                                    <div class="selected-file-name mt-2" id="mainSelectedFileName">Файл не выбран</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="ManualText" class="form-label text-light">Или вставьте текст</label>
+                                    <textarea asp-for="ManualText"
+                                              class="form-control dashboard-textarea"
+                                              rows="5"
+                                              placeholder="Ручной ввод нужен только если нет файла"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary-custom">
+                                    Запустить анализ
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card mb-4">
+                        <h5>Ключевая проблема</h5>
+                        <p>@(vm.MainProblem ?? "Нет данных")</p>
+
+                        <h5>Рекомендация</h5>
+                        <p>@(vm.AiRecommendation ?? "Нет данных")</p>
+
+                        @if (vm.CurrentHistoryId.HasValue)
+                        {
+                            <a class="btn btn-warning mb-3" href="/Chat/Index?historyId=@vm.CurrentHistoryId">
+                                Продолжить в AI-чате
+                            </a>
+                        }
+
+                        <h5>Улучшения</h5>
+                        <ul class="dashboard-list">
+                            @if (vm.Improvements != null && vm.Improvements.Any())
+                            {
+                                foreach (var item in vm.Improvements)
+                                {
+                                    <li>@item</li>
+                                }
+                            }
+                            else
+                            {
+                                <li>Нет данных</li>
+                            }
+                        </ul>
+
+                        <h5 class="mt-4">Проблемы</h5>
+                        <ul class="dashboard-list">
+                            @if (vm.Problems != null && vm.Problems.Any())
+                            {
+                                foreach (var item in vm.Problems)
+                                {
+                                    <li>@item</li>
+                                }
+                            }
+                            else
+                            {
+                                <li>Нет данных</li>
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="dashboard-card mb-4">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                            <h5 class="mb-0">Было / Стало</h5>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-outline-light btn-sm"
+                                        onclick="openTextPreviewModal('Исходный текст НТЗ', `@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(vm.OriginalTzText ?? ""))`)">
+                                    Открыть было
+                                </button>
+
+                                <button type="button" class="btn btn-outline-light btn-sm"
+                                        onclick="openTextPreviewModal('Улучшенный текст НТЗ', `@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(vm.ImprovedTzText ?? ""))`)">
+                                    Открыть стало
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-stretch compare-grid">
+                            <div class="col-md-6 d-flex">
+                                <div class="compare-card w-100">
+                                    <div class="section-label">Было</div>
+                                    <div class="tz-text-box compact-box">
+                                        @(string.IsNullOrWhiteSpace(vm.OriginalTzText) ? "Нет текста" : vm.OriginalTzText)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 d-flex">
+                                <div class="compare-card w-100">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                        <div class="section-label mb-0">Стало</div>
+
+                                        @if (!string.IsNullOrWhiteSpace(vm.ImprovedTzText))
+                                        {
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <form asp-action="DownloadImprovedDocx" asp-controller="Home" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="improvedText" value="@vm.ImprovedTzText" />
+                                                    <input type="hidden" name="fileName" value="@vm.DownloadFileName" />
+                                                    <button type="submit" class="btn btn-primary btn-sm">
+                                                        DOCX
+                                                    </button>
+                                                </form>
+
+                                                <form asp-action="DownloadImprovedPdf" asp-controller="Home" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="improvedText" value="@vm.ImprovedTzText" />
+                                                    <input type="hidden" name="fileName" value="@vm.DownloadFileName" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">PDF</button>
+                                                </form>
+
+                                                <form asp-action="DownloadImprovedTxt" asp-controller="Home" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="improvedText" value="@vm.ImprovedTzText" />
+                                                    <input type="hidden" name="fileName" value="@vm.DownloadFileName" />
+                                                    <button type="submit" class="btn btn-secondary btn-sm">TXT</button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div class="tz-text-box compact-box">
+                                        @(string.IsNullOrWhiteSpace(vm.ImprovedTzText) ? "Нет данных" : vm.ImprovedTzText)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(vm.ImprovedTzText))
+                        {
+                            <div class="full-report-block mt-4">
+                                <div class="section-label mb-2">Полный отчет</div>
+
+                                <div class="d-flex flex-wrap gap-2">
+                                    <form asp-action="DownloadFullReportDocx" asp-controller="Home" method="post">
+                                        @Html.AntiForgeryToken()
+                                        @Html.Partial("_FullReportHiddenFields", vm)
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            Отчет DOCX
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="DownloadFullReportPdf" asp-controller="Home" method="post">
+                                        @Html.AntiForgeryToken()
+                                        @Html.Partial("_FullReportHiddenFields", vm)
+                                        <button type="submit" class="btn btn-danger btn-sm">Отчет PDF</button>
+                                    </form>
+
+                                    <form asp-action="DownloadFullReportExcel" asp-controller="Home" method="post">
+                                        @Html.AntiForgeryToken()
+                                        @Html.Partial("_FullReportHiddenFields", vm)
+                                        <button type="submit" class="btn btn-success btn-sm">Отчет Excel</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="dashboard-card mb-4">
+                        <h5>Классификация разделов технического задания</h5>
+
+                        @if (vm.SectionClassifications != null && vm.SectionClassifications.Any())
+                        {
+                            <div class="history-list">
+                                @foreach (var item in vm.SectionClassifications)
+                                {
+                                    <div class="history-item">
+                                        <div class="history-name">@item.SectionName</div>
+                                        <div class="history-meta">
+                                            <span>Категория: @item.Category</span>
+                                        </div>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.Comment))
+                                        {
+                                            <div class="criterion-comment mt-2">@item.Comment</div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p>Нет данных</p>
+                        }
+                    </div>
+
+                    <div class="dashboard-card mb-4">
+                        <h5>Выделенные сущности из ТЗ</h5>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <div class="material-card h-100">
+                                    <div class="material-title mb-2">Требования</div>
+                                    <ul class="dashboard-list mb-0">
+                                        @if (vm.ExtractedRequirements != null && vm.ExtractedRequirements.Any())
+                                        {
+                                            foreach (var item in vm.ExtractedRequirements)
+                                            {
+                                                <li>@item</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>Нет данных</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="material-card h-100">
+                                    <div class="material-title mb-2">Сроки</div>
+                                    <ul class="dashboard-list mb-0">
+                                        @if (vm.ExtractedDeadlines != null && vm.ExtractedDeadlines.Any())
+                                        {
+                                            foreach (var item in vm.ExtractedDeadlines)
+                                            {
+                                                <li>@item</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>Сроки реализации программы и этапов выполнения работ в документе не указаны.</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="material-card h-100">
+                                    <div class="material-title mb-2">KPI</div>
+                                    <ul class="dashboard-list mb-0">
+                                        @if (vm.ExtractedKpis != null && vm.ExtractedKpis.Any())
+                                        {
+                                            foreach (var item in vm.ExtractedKpis)
+                                            {
+                                                <li>@item</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>Нет данных</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="material-card h-100">
+                                    <div class="material-title mb-2">Ожидаемые результаты</div>
+                                    <ul class="dashboard-list mb-0">
+                                        @if (vm.ExtractedExpectedResults != null && vm.ExtractedExpectedResults.Any())
+                                        {
+                                            foreach (var item in vm.ExtractedExpectedResults)
+                                            {
+                                                <li>@item</li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>Нет данных</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card mb-4" id="history-block">
+                        <h5>История документов</h5>
+
+                        @if (vm.AnalysisHistory != null && vm.AnalysisHistory.Any())
+                        {
+                            <div class="history-list">
+                                @foreach (var item in vm.AnalysisHistory)
+                                {
+                                    <a class="history-item" href="/Home/Index?historyId=@item.Id">
+                                        <div class="history-name">@item.FileName</div>
+                                        <div class="history-meta">
+                                            <span>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                                            <span>Балл: @item.Score</span>
+                                            <span>Полнота: @item.CompletenessPercent%</span>
+                                            <span>Ясность: @item.ClarityPercent%</span>
+                                            <span>@item.Verdict</span>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p>История пока пуста.</p>
+                        }
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-3 d-flex" style="margin-top: 120px;">
+                <aside class="dashboard-right w-100">
+                    <div class="dashboard-card mb-4 score-card dashboard-score-card-fixed">
+                        <div class="score-title">Общая оценка</div>
+                        <div class="score-value">@vm.TotalScore</div>
+                    </div>
+
+                    <div class="dashboard-card mb-4">
+                        <div class="metric-row"><span>Полнота</span><strong>@vm.CompletenessPercent%</strong></div>
+                        <div class="metric-row"><span>Ясность</span><strong>@vm.ClarityPercent%</strong></div>
+                        <div class="metric-row"><span>Вердикт</span><strong>@(vm.RiskLevel ?? "Нет")</strong></div>
+                    </div>
+
+                    <div class="dashboard-card mb-4">
+                        <h5>Оценка по критериям</h5>
+
+                        @if (vm.CriteriaResults != null && vm.CriteriaResults.Any())
+                        {
+                            @foreach (var item in vm.CriteriaResults)
+                            {
+                                <div class="criterion-item">
+                                    <div class="criterion-head">
+                                        <span>@item.Name</span>
+                                        <strong>@item.Score / @item.MaxScore</strong>
+                                    </div>
+
+                                    <div class="criterion-comment mt-2">
+                                        @if (!string.IsNullOrWhiteSpace(item.Comment))
+                                        {
+                                            @item.Comment
+                                        }
+                                        else
+                                        {
+                                            <span>Комментарий по критерию не сформирован.</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>Нет данных</p>
+                        }
+                    </div>
+                </aside>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="analysisLoader" class="analysis-loader-overlay d-none">
+        <div class="analysis-loader-card">
+            <div class="analysis-loader-spinner"></div>
+            <div class="analysis-loader-title" id="analysisLoaderTitle">Идет AI-анализ документа</div>
+            <div class="analysis-loader-text" id="analysisLoaderText">
+                Извлекаем текст, строго сверяем структуру с шаблоном и примером, ищем проблемы, критерии, KPI, сроки и формируем улучшенную версию документа.
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="materialPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="materialPreviewTitle">Просмотр файла</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="materialPreviewBody" class="preview-body">Загрузка...</div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <form id="resetMaterialForm" asp-action="ResetReferenceMaterial" asp-controller="Home" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="resetMaterialType" name="materialType" value="" />
+                    <button type="submit" class="btn btn-outline-danger">Сбросить</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="textPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="textPreviewTitle">Просмотр текста</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="textPreviewBody" class="preview-body"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function openMaterialModal(materialType) {
+            const titleEl = document.getElementById('materialPreviewTitle');
+            const bodyEl = document.getElementById('materialPreviewBody');
+            const resetTypeEl = document.getElementById('resetMaterialType');
+
+            titleEl.textContent = 'Загрузка...';
+            bodyEl.innerHTML = 'Загрузка...';
+            resetTypeEl.value = materialType;
+
+            const modalElement = document.getElementById('materialPreviewModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            try {
+                const response = await fetch(`/Home/PreviewReferenceMaterial?materialType=${encodeURIComponent(materialType)}`);
+                const rawText = await response.text();
+
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch {
+                    titleEl.textContent = 'Ошибка';
+                    bodyEl.innerHTML = `<pre style="white-space:pre-wrap;">${rawText}</pre>`;
+                    return;
+                }
+
+                titleEl.textContent = data.title || 'Просмотр файла';
+                bodyEl.innerHTML = data.html || 'Нет данных для просмотра.';
+            } catch {
+                titleEl.textContent = 'Ошибка';
+                bodyEl.innerHTML = 'Не удалось загрузить предпросмотр файла.';
+            }
+        }
+
+        function escapeHtml(text) {
+            return (text || '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        function openTextPreviewModal(title, text) {
+            document.getElementById('textPreviewTitle').textContent = title;
+            document.getElementById('textPreviewBody').innerHTML =
+                `<div class="doc-preview-text">${escapeHtml(text).replaceAll('\n', '<br>')}</div>`;
+
+            const modal = new bootstrap.Modal(document.getElementById('textPreviewModal'));
+            modal.show();
+        }
+
+        function toggleMaterialCard(button) {
+            const card = button.closest('.material-card');
+            if (!card) return;
+
+            const body = card.querySelector('.material-body');
+            if (!body) return;
+
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? '' : 'none';
+            button.textContent = isHidden ? 'Свернуть' : 'Развернуть';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const analysisForm = document.getElementById('analysisForm');
+            const loader = document.getElementById('analysisLoader');
+            const toggleUploadPanelBtn = document.getElementById('toggleUploadPanelBtn');
+            const uploadPanelCard = document.getElementById('uploadPanelCard');
+            const fileInput = document.getElementById('mainUploadedFileInput');
+            const fileNameLabel = document.getElementById('mainSelectedFileName');
+
+            if (toggleUploadPanelBtn && uploadPanelCard) {
+                toggleUploadPanelBtn.addEventListener('click', function () {
+                    uploadPanelCard.classList.toggle('collapsed');
+                    this.textContent = uploadPanelCard.classList.contains('collapsed') ? 'Развернуть' : 'Свернуть';
+                });
+            }
+
+            if (fileInput && fileNameLabel) {
+                fileInput.addEventListener('change', function () {
+                    fileNameLabel.textContent = this.files && this.files.length > 0
+                        ? this.files[0].name
+                        : 'Файл не выбран';
+                });
+            }
+
+            document.querySelectorAll('.custom-hidden-file').forEach(input => {
+                input.addEventListener('change', function () {
+                    const trigger = this.closest('.custom-file-trigger');
+                    const span = trigger ? trigger.querySelector('span') : null;
+
+                    if (span) {
+                        span.textContent = this.files && this.files.length > 0
+                            ? this.files[0].name
+                            : 'Выбрать файл';
+                    }
+                });
+            });
+
+            if (analysisForm && loader) {
+                analysisForm.addEventListener('submit', function () {
+                    loader.classList.remove('d-none');
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,67 @@
+﻿@model SpecMind.Models.HomeIndexViewModel
+
+<input type="hidden" asp-for="AnalysisMode" />
+<input type="hidden" asp-for="MainProblem" />
+<input type="hidden" asp-for="AiRecommendation" />
+<input type="hidden" asp-for="TotalScore" />
+<input type="hidden" asp-for="CompletenessPercent" />
+<input type="hidden" asp-for="ClarityPercent" />
+<input type="hidden" asp-for="RiskLevel" />
+<input type="hidden" asp-for="OriginalTzText" />
+<input type="hidden" asp-for="ImprovedTzText" />
+<input type="hidden" asp-for="DownloadFileName" />
+
+@for (int i = 0; i < Model.Problems.Count; i++)
+{
+    <input type="hidden" name="Problems[@i]" value="@Model.Problems[i]" />
+}
+
+@for (int i = 0; i < Model.Improvements.Count; i++)
+{
+    <input type="hidden" name="Improvements[@i]" value="@Model.Improvements[i]" />
+}
+
+@for (int i = 0; i < Model.ExtractedRequirements.Count; i++)
+{
+    <input type="hidden" name="ExtractedRequirements[@i]" value="@Model.ExtractedRequirements[i]" />
+}
+
+@for (int i = 0; i < Model.ExtractedDeadlines.Count; i++)
+{
+    <input type="hidden" name="ExtractedDeadlines[@i]" value="@Model.ExtractedDeadlines[i]" />
+}
+
+@for (int i = 0; i < Model.ExtractedKpis.Count; i++)
+{
+    <input type="hidden" name="ExtractedKpis[@i]" value="@Model.ExtractedKpis[i]" />
+}
+
+@for (int i = 0; i < Model.ExtractedExpectedResults.Count; i++)
+{
+    <input type="hidden" name="ExtractedExpectedResults[@i]" value="@Model.ExtractedExpectedResults[i]" />
+}
+
+@for (int i = 0; i < Model.CriteriaResults.Count; i++)
+{
+    <input type="hidden" name="CriteriaResults[@i].Name" value="@Model.CriteriaResults[i].Name" />
+    <input type="hidden" name="CriteriaResults[@i].Weight" value="@Model.CriteriaResults[i].Weight" />
+    <input type="hidden" name="CriteriaResults[@i].Score" value="@Model.CriteriaResults[i].Score" />
+    <input type="hidden" name="CriteriaResults[@i].MaxScore" value="@Model.CriteriaResults[i].MaxScore" />
+    <input type="hidden" name="CriteriaResults[@i].Passed" value="@Model.CriteriaResults[i].Passed" />
+    <input type="hidden" name="CriteriaResults[@i].Comment" value="@Model.CriteriaResults[i].Comment" />
+}
+
+@for (int i = 0; i < Model.SectionClassifications.Count; i++)
+{
+    <input type="hidden" name="SectionClassifications[@i].SectionName" value="@Model.SectionClassifications[i].SectionName" />
+    <input type="hidden" name="SectionClassifications[@i].Category" value="@Model.SectionClassifications[i].Category" />
+    <input type="hidden" name="SectionClassifications[@i].Comment" value="@Model.SectionClassifications[i].Comment" />
+}
+
+<input type="hidden" name="TemplateCompliance.MatchesTemplate" value="@Model.TemplateCompliance.MatchesTemplate" />
+<input type="hidden" name="TemplateCompliance.StructureComment" value="@Model.TemplateCompliance.StructureComment" />
+
+@for (int i = 0; i < Model.TemplateCompliance.MissingSections.Count; i++)
+{
+    <input type="hidden" name="TemplateCompliance.MissingSections[@i]" value="@Model.TemplateCompliance.MissingSections[i]" />
+}

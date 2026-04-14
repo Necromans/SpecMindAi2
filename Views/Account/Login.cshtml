@@ -1,0 +1,56 @@
+﻿@model SpecMind.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<section class="auth-page">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100 py-5">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
+                        <div class="hero-badge">Добро пожаловать</div>
+                        <h1 class="auth-title">Вход в SpecMind</h1>
+                        <p class="auth-subtitle">
+                            Войдите в систему, чтобы продолжить работу.
+                        </p>
+                    </div>
+
+                    <form method="post" asp-action="Login" asp-controller="Account">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label auth-label">Почта</label>
+                            <input asp-for="Email" class="form-control auth-input" placeholder="Введите email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label auth-label">Пароль</label>
+                            <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Введите пароль" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="RememberMe" class="form-check-input custom-check" />
+                            <label asp-for="RememberMe" class="form-check-label text-light">Запомнить меня</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100 mb-3">
+                            Войти
+                        </button>
+
+                        <div class="text-center">
+                            <span class="auth-bottom-text">Нет аккаунта?</span>
+                            <a asp-controller="Account" asp-action="Register" class="auth-link">Зарегистрироваться</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

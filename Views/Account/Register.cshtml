@@ -1,0 +1,63 @@
+﻿@model SpecMind.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<section class="auth-page">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100 py-5">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
+                        <div class="hero-badge">Создание аккаунта</div>
+                        <h1 class="auth-title">Регистрация в SpecMind</h1>
+                        <p class="auth-subtitle">
+                            Создайте аккаунт, чтобы сохранять документы и историю анализа.
+                        </p>
+                    </div>
+
+                    <form method="post" asp-action="Register" asp-controller="Account">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label auth-label">Имя</label>
+                            <input asp-for="Name" class="form-control auth-input" placeholder="Введите ваше имя" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label auth-label">Почта</label>
+                            <input asp-for="Email" class="form-control auth-input" placeholder="Введите email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label auth-label">Пароль</label>
+                            <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Придумайте пароль" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmPassword" class="form-label auth-label">Повторите пароль</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control auth-input" placeholder="Повторите пароль" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100 mb-3">
+                            Зарегистрироваться
+                        </button>
+
+                        <div class="text-center">
+                            <span class="auth-bottom-text">Уже есть аккаунт?</span>
+                            <a asp-controller="Account" asp-action="Login" class="auth-link">Войти</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

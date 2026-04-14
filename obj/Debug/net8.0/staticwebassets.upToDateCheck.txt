@@ -1,0 +1,95 @@
+wwwroot\css\chat.css
+wwwroot\css\main.css
+wwwroot\css\site.css
+wwwroot\favicon.ico
+wwwroot\files\criteria.xlsx
+wwwroot\files\example.docx
+wwwroot\files\template.docx
+wwwroot\js\site.js
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
+wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.js.map
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js
+wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
+wwwroot\lib\bootstrap\LICENSE
+wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js
+wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js
+wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js
+wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js
+wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
+wwwroot\lib\jquery-validation\dist\additional-methods.js
+wwwroot\lib\jquery-validation\dist\additional-methods.min.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.js
+wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+wwwroot\lib\jquery-validation\LICENSE.md
+wwwroot\lib\jquery\dist\jquery.js
+wwwroot\lib\jquery\dist\jquery.min.js
+wwwroot\lib\jquery\dist\jquery.min.map
+wwwroot\lib\jquery\dist\jquery.slim.js
+wwwroot\lib\jquery\dist\jquery.slim.min.js
+wwwroot\lib\jquery\dist\jquery.slim.min.map
+wwwroot\lib\jquery\LICENSE.txt
+wwwroot\uploads\00cd8764-c18f-4502-81d4-a2552be8fdb0_ТЗ Цифровой полигон.txt
+wwwroot\uploads\02dc4d5c-1bf9-42d1-a53c-753d4ad44e62_ТЗ Цифровой полигон.docx
+wwwroot\uploads\323fc220-4323-4dcc-bbf2-12f64107d6ec_ТЗ Цифровой полигон.docx
+wwwroot\uploads\38c167eb-6b8d-4c0e-8e28-01ecf6620b48_FINAL_TZ_SATBAYEV.docx
+wwwroot\uploads\4f040ed9-89f3-4677-b32a-5efaf3fc749f_ТЗ Цифровой полигон.docx
+wwwroot\uploads\5b6fdd0c-4504-4cf4-a2dd-76ac8684d3a9_ТЗ Цифровой полигон.docx
+wwwroot\uploads\7ea6bcfa-2962-452a-a42e-f91003a0b5b4_тест.txt
+wwwroot\uploads\859403f7-8b33-4914-9dd8-e72f9e928e00_Improved_TZ_20260414_1618.docx
+wwwroot\uploads\8b07a1a6-c8b3-4a5c-a48c-b8705f8ed83f_ТЗ Цифровой полигон.docx
+wwwroot\uploads\95ebe657-dcf0-4177-866e-eac6c001c760_ТЗ Цифровой полигон.docx
+wwwroot\uploads\a8c9fe19-5e1a-47ba-bbd0-eab6d5b48378_ТЗ Цифровой полигон.txt
+wwwroot\uploads\af693f3b-e05e-4d54-98f3-2ab4f820bbe6_FINAL_TZ_SATBAYEV.docx
+wwwroot\uploads\b080aa05-5722-4ac8-a026-ae7a18c05bc7_ТЗ Цифровой полигон.docx
+wwwroot\uploads\bb5c0434-999c-471b-b5cd-ed9cb440c2eb_ТЗ Цифровой полигон.docx
+wwwroot\uploads\bbabc42b-dc88-4f7f-9e03-814d37c8dd13_ТЗ Цифровой полигон.txt
+wwwroot\uploads\c0608b7f-10c3-4ec8-b987-d7c6b117fa59_medium_STRICT.docx
+wwwroot\uploads\c67c60bb-2d89-468f-b542-79e6a0ae9a60_ТЗ Цифровой полигон.docx
+wwwroot\uploads\cb92738c-403b-4949-83c7-52f482b6f961_Лучшее .docx
+wwwroot\uploads\cf1f7fd1-b038-4a58-9dc1-7e8e4137761f_ТЗ Цифровой полигон.txt
+wwwroot\uploads\d02f152e-fdcd-4f51-8425-cd8ba6c8c73d_тест.txt
+wwwroot\uploads\d1b778de-26f1-4fd5-ac39-1ddf67212676_ТЗ Цифровой полигон.docx
+wwwroot\uploads\d90739ee-4936-4cf0-849f-315aafac655e_ТЗ Цифровой полигон.docx
+wwwroot\uploads\e705d085-1402-4d11-ab0c-f947f294b180_ETALON_TZ_SATBAYEV.docx
+wwwroot\uploads\ed07d12e-6d70-4aee-bd4b-d23778ca784a_ТЗ Цифровой полигон.docx
+wwwroot\uploads\ff30f4c5-8646-4c25-ba34-5c523e270d08_ТЗ Цифровой полигон.txt

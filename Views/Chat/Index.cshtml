@@ -1,0 +1,485 @@
+﻿@model SpecMind.Controllers.ChatViewModel
+
+@{
+    ViewData["Title"] = "AI Помощник";
+    var currentConversationId = Model.ConversationId;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
+}
+
+<div class="pf-chat-layout finance-style-chat">
+    <aside class="pf-chat-sidebar">
+        <div class="pf-chat-sidebar-top">
+            <a href="/Chat/Index" class="pf-new-chat-btn">
+                <span class="pf-plus">+</span>
+                <span>Новый чат</span>
+            </a>
+
+            <div class="pf-chat-search">
+                <span class="pf-chat-search-icon">🔍</span>
+                <input type="text" id="chatSearchInput" placeholder="Поиск по чатам..." />
+            </div>
+        </div>
+
+        <div class="pf-chat-history" id="chatHistoryList">
+            @if (Model.Conversations != null && Model.Conversations.Any())
+            {
+                foreach (var item in Model.Conversations)
+                {
+                    var isActive = currentConversationId.HasValue && currentConversationId.Value == item.Id;
+
+                    <div class="pf-chat-history-row">
+                        <a class="pf-chat-history-item @(isActive ? "active" : "")"
+                               href="/Chat/Index?conversationId=@item.Id"
+                               data-title="@item.Title.ToLowerInvariant()">
+                            <div class="pf-chat-history-title">@item.Title</div>
+                        </a>
+
+                        <form asp-action="Delete" asp-controller="Chat" method="post" class="pf-chat-delete-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="conversationId" value="@item.Id" />
+                            <button type="submit" class="pf-chat-delete-btn" title="Удалить чат">🗑</button>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="pf-empty-history">История чатов пока пуста</div>
+            }
+        </div>
+    </aside>
+
+    <section class="pf-chat-main">
+        <div class="pf-chat-topbar">
+            <div class="pf-chat-topbar-left">
+                <div class="pf-chat-avatar">✦</div>
+                <div>
+                    <div class="pf-chat-title">AI помощник SpecMind</div>
+                    <div class="pf-chat-subtitle">Онлайн</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pf-chat-messages" id="chatMessages">
+            @if (Model.Messages != null && Model.Messages.Any())
+            {
+                foreach (var msg in Model.Messages)
+                {
+                    var isUser = msg.Role == "user";
+
+                    <div class="pf-message-row @(isUser ? "user" : "assistant")">
+                        @if (!isUser)
+                        {
+                            <div class="pf-message-avatar">✦</div>
+                        }
+
+                        <div class="pf-message-bubble-wrap">
+                            <div class="pf-message-bubble @(isUser ? "user" : "assistant")">
+                                <div class="pf-message-text markdown-content">@msg.Content</div>
+                            </div>
+                        </div>
+
+                        @if (isUser)
+                        {
+                            <div class="pf-message-avatar">👤</div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="pf-chat-empty-state">
+                    <div class="pf-chat-empty-card">
+                        <div class="pf-chat-empty-title">Диалог пока пуст</div>
+                        <div class="pf-chat-empty-text">
+                            Напиши сообщение, задай вопрос по шаблону НТЗ или загрузи файл.
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div id="typingIndicator" class="pf-message-row assistant d-none">
+                <div class="pf-message-avatar">✦</div>
+                <div class="pf-message-bubble-wrap">
+                    <div class="pf-message-bubble assistant pf-typing-bubble">
+                        <div class="pf-typing-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pf-chat-input-panel">
+            <form asp-action="Index"
+                  asp-controller="Chat"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="pf-chat-form"
+                  id="chatForm"
+                  autocomplete="off">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="ConversationId" />
+                <input type="hidden" asp-for="HistoryId" />
+                <input type="hidden" asp-for="ContextText" />
+                <input type="hidden" asp-for="OriginalText" />
+
+                <div class="pf-chat-input-row">
+                    <label class="pf-attach-btn" title="Прикрепить файл">
+                        📎
+                        <input asp-for="UploadedFile" type="file" class="pf-hidden-file-input" id="chatFileInput" />
+                    </label>
+
+                    <textarea asp-for="UserMessage"
+                              class="pf-chat-textarea"
+                              rows="1"
+                              autocomplete="off"
+                              spellcheck="false"
+                              data-lpignore="true"
+                              placeholder="Напишите вопрос или опишите задачу..."></textarea>
+
+                    <button type="button" class="pf-mic-btn" id="voiceRecordBtn" title="Голосовой ввод">
+                        🎤
+                    </button>
+
+                    <button type="submit" class="pf-send-btn" title="Отправить">
+                        ➤
+                    </button>
+                </div>
+
+                <div class="pf-chat-status-row">
+                    <div class="pf-chat-file-note" id="chatFileNote">Файл не выбран</div>
+                    <div class="pf-chat-hint" id="voiceStatus">Enter — отправить · Shift+Enter — перенос строки</div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <aside class="pf-chat-rightbar">
+        <div class="pf-right-card">
+            <div class="pf-right-card-head">
+                <div class="pf-right-title">Текущая версия</div>
+                <div class="pf-right-actions">
+                    <button type="button" class="pf-preview-btn"
+                            onclick="openChatTextPreviewModal('Текущая версия', document.getElementById('contextEditor').value)">
+                        Открыть
+                    </button>
+                </div>
+            </div>
+
+            <textarea id="contextEditor"
+                      class="pf-right-editor"
+                      placeholder="Введите или отредактируйте текущую версию текста...">@Model.ContextText</textarea>
+        </div>
+
+        <div class="pf-right-card">
+            <div class="pf-right-card-head">
+                <div class="pf-right-title">Исходный текст</div>
+                <div class="pf-right-actions">
+                    <button type="button" class="pf-preview-btn"
+                            onclick="openChatTextPreviewModal('Исходный текст', document.getElementById('originalEditor').value)">
+                        Открыть
+                    </button>
+                </div>
+            </div>
+
+            <textarea id="originalEditor"
+                      class="pf-right-editor"
+                      placeholder="Введите или отредактируйте исходный текст...">@Model.OriginalText</textarea>
+        </div>
+    </aside>
+</div>
+
+<div class="modal fade" id="chatTextPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="chatTextPreviewTitle">Просмотр текста</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="chatTextPreviewBody" class="preview-body"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const textarea = document.querySelector('.pf-chat-textarea');
+            const form = document.getElementById('chatForm');
+            const messages = document.getElementById('chatMessages');
+            const searchInput = document.getElementById('chatSearchInput');
+            const chatItems = document.querySelectorAll('.pf-chat-history-item');
+            const micBtn = document.getElementById('voiceRecordBtn');
+            const voiceStatus = document.getElementById('voiceStatus');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const fileInput = document.getElementById('chatFileInput');
+            const fileNote = document.getElementById('chatFileNote');
+                    const contextEditor = document.getElementById('contextEditor');
+        const originalEditor = document.getElementById('originalEditor');
+
+            let mediaRecorder = null;
+            let audioChunks = [];
+            let streamRef = null;
+            let isRecording = false;
+            let submitLocked = false;
+
+            function autoResize(el) {
+                if (!el) return;
+                el.style.height = 'auto';
+                el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+            }
+
+            function scrollToBottom() {
+                if (messages) {
+                    messages.scrollTop = messages.scrollHeight;
+                }
+            }
+
+            function escapeHtml(text) {
+                return (text || '')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+
+            function renderMiniMarkdown(text) {
+                let safe = escapeHtml(text || '');
+
+                safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                safe = safe.replace(/^### (.*)$/gm, '<h6>$1</h6>');
+                safe = safe.replace(/^## (.*)$/gm, '<h5>$1</h5>');
+                safe = safe.replace(/^# (.*)$/gm, '<h4>$1</h4>');
+                safe = safe.replace(/^- (.*)$/gm, '<li>$1</li>');
+
+                safe = safe.replace(/(<li>[\s\S]*?<\/li>)/g, function (match) {
+                    return '<ul>' + match + '</ul>';
+                });
+
+                safe = safe.replace(/\n/g, '<br>');
+                safe = safe.replace(/<\/ul><br><ul>/g, '');
+
+                return safe;
+            }
+
+            function appendOptimisticUserMessage(text) {
+                if (!messages || !text) return;
+
+                const row = document.createElement('div');
+                row.className = 'pf-message-row user';
+
+                row.innerHTML = `
+                    <div class="pf-message-bubble-wrap">
+                        <div class="pf-message-bubble user">
+                            <div class="pf-message-text markdown-content">${renderMiniMarkdown(text)}</div>
+                        </div>
+                    </div>
+                    <div class="pf-message-avatar">👤</div>
+                `;
+
+                messages.insertBefore(row, typingIndicator);
+            }
+
+            document.querySelectorAll('.markdown-content').forEach(el => {
+                el.innerHTML = renderMiniMarkdown(el.textContent);
+            });
+
+            window.openChatTextPreviewModal = function (title, text) {
+                document.getElementById('chatTextPreviewTitle').textContent = title;
+                document.getElementById('chatTextPreviewBody').innerHTML =
+                    `<div class="doc-preview-text">${escapeHtml(text).replaceAll('\n', '<br>')}</div>`;
+
+                const modal = new bootstrap.Modal(document.getElementById('chatTextPreviewModal'));
+                modal.show();
+            }
+
+            async function startRecording() {
+                try {
+                    streamRef = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audioChunks = [];
+
+                    mediaRecorder = new MediaRecorder(streamRef, { mimeType: 'audio/webm' });
+
+                    mediaRecorder.ondataavailable = function (e) {
+                        if (e.data && e.data.size > 0) {
+                            audioChunks.push(e.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = async function () {
+                        try {
+                            voiceStatus.textContent = 'Распознаю голос...';
+
+                            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                            const file = new File([blob], 'voice-message.webm', { type: 'audio/webm' });
+
+                            const formData = new FormData();
+                            formData.append('audioFile', file);
+
+                            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                            if (tokenInput) {
+                                formData.append('__RequestVerificationToken', tokenInput.value);
+                            }
+
+                            const response = await fetch('/Whisper/Transcribe', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            const result = await response.json();
+
+                            if (!result.success) {
+                                voiceStatus.textContent = 'Ошибка распознавания: ' + (result.error || 'Неизвестная ошибка');
+                                return;
+                            }
+
+                            const current = textarea.value?.trim();
+                            textarea.value = current ? current + '\n' + result.text : result.text;
+                            autoResize(textarea);
+                            voiceStatus.textContent = 'Голос успешно распознан';
+                        } catch {
+                            voiceStatus.textContent = 'Ошибка отправки аудио';
+                        } finally {
+                            if (streamRef) {
+                                streamRef.getTracks().forEach(t => t.stop());
+                                streamRef = null;
+                            }
+
+                            micBtn.classList.remove('recording');
+                            isRecording = false;
+                        }
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    micBtn.classList.add('recording');
+                    voiceStatus.textContent = 'Идёт запись... Нажми ещё раз для остановки';
+                } catch {
+                    voiceStatus.textContent = 'Нет доступа к микрофону';
+                }
+            }
+
+            function stopRecording() {
+                if (mediaRecorder && isRecording) {
+                    mediaRecorder.stop();
+                }
+            }
+
+            if (micBtn) {
+                micBtn.addEventListener('click', async function () {
+                    if (!isRecording) {
+                        await startRecording();
+                    } else {
+                        stopRecording();
+                    }
+                });
+            }
+
+            if (textarea) {
+                autoResize(textarea);
+                        textarea.value = '';
+        autoResize(textarea);
+                textarea.addEventListener('input', function () {
+                    autoResize(this);
+                });
+
+                textarea.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (!submitLocked) {
+                            form.requestSubmit();
+                        }
+                    }
+                });
+            }
+
+            if (fileInput && fileNote) {
+                fileInput.addEventListener('change', function () {
+                    fileNote.textContent = this.files && this.files.length > 0
+                        ? this.files[0].name
+                        : 'Файл не выбран';
+                });
+            }
+
+            scrollToBottom();
+
+            if (searchInput && chatItems.length > 0) {
+                searchInput.addEventListener('input', function () {
+                    const value = this.value.toLowerCase().trim();
+
+                    chatItems.forEach(item => {
+                        const title = item.getAttribute('data-title') || '';
+                        const row = item.closest('.pf-chat-history-row');
+                        if (row) {
+                            row.style.display = title.includes(value) ? '' : 'none';
+                        }
+                    });
+                });
+            }
+
+            if (form && typingIndicator) {
+                form.addEventListener('submit', function (e) {
+                    if (submitLocked) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    const text = (textarea?.value || '').trim();
+                    const hasFile = fileInput?.files && fileInput.files.length > 0;
+
+                    if (!text && !hasFile) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    submitLocked = true;
+
+                    if (text) {
+                        appendOptimisticUserMessage(text);
+
+                        const shadow = document.createElement('input');
+                        shadow.type = 'hidden';
+                        shadow.name = textarea.name;
+                        shadow.value = text;
+                        form.appendChild(shadow);
+
+                        textarea.removeAttribute('name');
+                        textarea.value = '';
+                        autoResize(textarea);
+                    }
+
+                            const contextHidden = document.querySelector('input[name="ContextText"]');
+        const originalHidden = document.querySelector('input[name="OriginalText"]');
+        const contextEditor = document.getElementById('contextEditor');
+        const originalEditor = document.getElementById('originalEditor');
+
+        if (contextHidden && contextEditor) {
+            contextHidden.value = contextEditor.value;
+        }
+
+        if (originalHidden && originalEditor) {
+            originalHidden.value = originalEditor.value;
+        }
+
+                    typingIndicator.classList.remove('d-none');
+                    voiceStatus.textContent = 'AI печатает ответ...';
+                    scrollToBottom();
+                });
+            }
+                    window.addEventListener('pageshow', function () {
+            if (textarea) {
+                textarea.value = '';
+                autoResize(textarea);
+            }
+        });
+        })();
+    </script>
+}

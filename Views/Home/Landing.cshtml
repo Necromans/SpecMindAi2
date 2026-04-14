@@ -1,0 +1,212 @@
+﻿@{
+    ViewData["Title"] = "SpecMind";
+}
+
+<section class="hero landing-hero">
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="hero-badge">AI-платформа для улучшения качества ТЗ</div>
+                <h1>Анализируйте технические задания быстрее, точнее и понятнее</h1>
+                <p class="lead">
+                    SpecMind помогает находить слабые места в технических заданиях научных проектов,
+                    улучшать формулировки, проверять полноту документа и получать рекомендации на основе AI.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary-custom">
+                        Начать бесплатно
+                    </a>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light-custom">
+                        Войти в систему
+                    </a>
+                </div>
+
+                <div class="hero-mini-stats mt-4">
+                    <div class="mini-stat">
+                        <span class="mini-stat-value">PDF / Word / TXT</span>
+                        <span class="mini-stat-label">поддержка форматов</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value">AI Score</span>
+                        <span class="mini-stat-label">оценка качества ТЗ</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value">До / После</span>
+                        <span class="mini-stat-label">сравнение версий</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="glass-card hero-panel">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <div class="metric-title">Качество документа</div>
+                                <div class="d-flex justify-content-between align-items-end">
+                                    <div class="metric-value">82 / 100</div>
+                                    <span class="badge text-bg-success">Хорошо</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-card">
+                                <div class="metric-title">Найдены риски</div>
+                                <div class="metric-value">7</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="metric-card">
+                                <div class="metric-title">Рекомендации</div>
+                                <div class="metric-value">12</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="metric-card">
+                                <div class="metric-title">Ключевая проблема</div>
+                                <div class="text-muted-custom">
+                                    В ТЗ не хватает конкретных KPI, критериев оценки результата и сроков выполнения этапов.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Что умеет SpecMind</h2>
+            <p class="section-subtitle">
+                Функции, которые соответствуют задаче хакатона и реально полезны для научных и инженерных проектов.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="icon-box">📄</div>
+                    <h5>Анализ структуры</h5>
+                    <p>Проверка полноты документа, разделов, сроков, KPI и ожидаемых результатов.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="icon-box">🧠</div>
+                    <h5>AI-рекомендации</h5>
+                    <p>Предложения по улучшению формулировок, целей, задач и логики технического задания.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="icon-box">⚠️</div>
+                    <h5>Поиск ошибок</h5>
+                    <p>Выявление размытых формулировок, пропусков, несоответствий и рисков документа.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="icon-box">📊</div>
+                    <h5>Оценка качества</h5>
+                    <p>Итоговый score, метрики качества и аналитика по загруженному ТЗ.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="demo">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Как выглядит результат</h2>
+            <p class="section-subtitle">
+                Демонстрационный пример анализа, который пользователь увидит после загрузки своего документа.
+            </p>
+        </div>
+
+        <div class="result-card">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <h5 class="mb-2">Результат тестового анализа</h5>
+                    <p class="mb-0">Пока на лендинге показан демонстрационный пример с тестовыми данными.</p>
+                </div>
+                <div class="score-box">
+                    <div class="small text-info-emphasis">Общая оценка</div>
+                    <div class="score-value">82</div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-title">Полнота</div>
+                        <div class="metric-value">88%</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-title">Ясность</div>
+                        <div class="metric-value">76%</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-title">Риски</div>
+                        <div class="metric-value">Средние</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h5>Что стоит улучшить</h5>
+                <ul class="result-list">
+                    <li>Добавить более точные критерии успешности проекта.</li>
+                    <li>Уточнить конечные результаты и измеримые показатели.</li>
+                    <li>Указать сроки выполнения по этапам.</li>
+                    <li>Конкретизировать используемые методы и ограничения.</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h5>Ключевая проблема</h5>
+                <p class="mb-0">
+                    В документе недостаточно конкретно описаны критерии оценки результата и сроки выполнения этапов.
+                </p>
+            </div>
+
+            <div>
+                <h5>Рекомендация от AI</h5>
+                <p class="mb-0">
+                    Текущее ТЗ имеет понятную общую цель, но требует большей формализации: добавьте метрики оценки,
+                    уточните этапы и ожидаемые результаты.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-box">
+            <h2 class="section-title mb-3">Готовы начать работу с системой?</h2>
+            <p class="section-subtitle mb-4">
+                Зарегистрируйтесь и получите доступ к загрузке документов, AI-анализу и рекомендациям по улучшению ТЗ.
+            </p>
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <a asp-controller="Account" asp-action="Register" class="btn btn-primary-custom btn-lg">
+                    Создать аккаунт
+                </a>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light-custom btn-lg">
+                    У меня уже есть аккаунт
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
